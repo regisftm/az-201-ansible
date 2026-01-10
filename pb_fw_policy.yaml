@@ -1,0 +1,36 @@
+- name: Create FW policy for app-server
+  hosts: fortigates
+  gather_facts: no
+  connection: httpapi
+  collections:
+  - fortinet.fortios
+  vars:
+    vdom: "root"
+    ansible_httpapi_use_ssl: yes
+    ansible_httpapi_validate_certs: no
+    ansible_httpapi_port: 443
+  tasks:
+   - name: Create FW policy to allow HTTP access to app-server.
+     fortios_firewall_policy:
+       vdom:  "{{ vdom }}"
+       state: "present"
+       firewall_policy:
+            policyid: 10
+            name: "app_server_http"
+            comments: "app-server-http-fw-policy - created with ANSIBLE"
+            srcintf:
+              - name: "port1"
+            dstintf:
+              - name: "port2"
+            action: accept
+            srcaddr:
+              - name: "all"
+            dstaddr:
+              - name: "app-server-http-vip"
+            schedule: "always"
+            service:
+              - name: "HTTP"
+            nat: enable
+            logtraffic: "all"
+
+# documentation: https://galaxy.ansible.com/ui/repo/published/fortinet/fortios/content/module/fortios_firewall_policy

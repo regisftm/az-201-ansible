@@ -1,0 +1,33 @@
+- name: Create the app-server-http-vip
+  hosts: fortigates
+  gather_facts: no
+  connection: httpapi
+  collections:
+  - fortinet.fortios
+  vars:
+    vdom: "root"
+    ansible_httpapi_use_ssl: yes
+    ansible_httpapi_validate_certs: no
+    ansible_httpapi_port: 443
+  tasks:
+   - name: Create a  HTTP access to app-server.
+     fortios_firewall_vip:
+       vdom:  "{{ vdom }}"
+       state: "present"
+       firewall_vip:
+          id: 10
+          comment: "app-server-http-vip"
+          name: "app-server-http-vip"
+          color: "0"
+          extintf: "port1"
+          type: "static-nat"
+          extip: "0.0.0.0"
+          mappedip:
+            - range: "10.100.3.4"
+          portforward: "enable"
+          protocol: "tcp" 
+          portmapping_type: "1-to-1"
+          extport: "8080"
+          mappedport: "80"
+
+# documentation: https://galaxy.ansible.com/ui/repo/published/fortinet/fortios/content/module/fortios_firewall_vip/

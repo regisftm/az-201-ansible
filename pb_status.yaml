@@ -1,0 +1,43 @@
+- name: Collet FortiGates status and license information
+  hosts: fortigates
+  gather_facts: no
+  connection: httpapi
+  collections:
+    - fortinet.fortios
+  vars:
+    vdom: "root"
+    ansible_httpapi_use_ssl: yes
+    ansible_httpapi_validate_certs: no
+    ansible_httpapi_port: 443
+  tasks:
+    - name: Get licence and system status
+      fortios_monitor_fact:
+        vdom: "{{ vdom }}"
+        selector: system_status
+      register: system_info
+
+    - name: Get license status
+      fortios_monitor_fact:
+        vdom: "{{ vdom }}"
+        selector: license_status
+      register: license_info
+
+    - name: Display formatted summary
+      debug:
+        msg:
+          - "============================================"
+          - "Hostname:   {{ system_info.meta.results.hostname }}"
+          - "============================================"
+          - "Model:      {{ system_info.meta.results.model_name }} {{ system_info.meta.results.model_number }}"
+          - "Serial:     {{ system_info.meta.serial }}"
+          - "Version:    {{ system_info.meta.version }}"
+          - "============================================"
+          - "CPU Max:    {{ license_info.meta.results.vm.cpu_max }}"
+          - "CPU Used:   {{ license_info.meta.results.vm.cpu_used }}"
+          - "Memory:     {{ (license_info.meta.results.vm.mem_used / 1024 / 1024 / 1024) | round(2) }} GB"
+          - "Status:     {{ license_info.meta.results.vm.status }}"
+          - "Valid:      {{ license_info.meta.results.vm.valid }}"
+          - "Expires:    {{ '%Y-%m-%d' | strftime(license_info.meta.results.vm.expires) }}"
+          - "============================================"
+
+# documention: https://galaxy.ansible.com/ui/repo/published/fortinet/fortios/content/module/fortios_monitor_fact/
