@@ -1,4 +1,4 @@
-- name: Create the app-server-http-vip
+- name: Create the rw-az201-linux-http-vip
   hosts: fortigates
   gather_facts: no
   connection: httpapi
@@ -10,14 +10,14 @@
     ansible_httpapi_validate_certs: no
     ansible_httpapi_port: 443
   tasks:
-   - name: Create a  HTTP access to app-server.
+   - name: Create a  HTTP access to Linux VM.
      fortios_firewall_vip:
        vdom:  "{{ vdom }}"
        state: "present"
        firewall_vip:
           id: 10
-          comment: "app-server-http-vip"
-          name: "app-server-http-vip"
+          comment: "rw-az201-linux-ssh-vip - created with ANSIBLE"
+          name: "rw-az201-linux-http-vip"
           color: "0"
           extintf: "port1"
           type: "static-nat"

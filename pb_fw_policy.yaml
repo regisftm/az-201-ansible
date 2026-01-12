@@ -1,4 +1,4 @@
-- name: Create FW policy for app-server
+- name: Create FW policy for Linux VM
   hosts: fortigates
   gather_facts: no
   connection: httpapi
@@ -10,14 +10,14 @@
     ansible_httpapi_validate_certs: no
     ansible_httpapi_port: 443
   tasks:
-   - name: Create FW policy to allow HTTP access to app-server.
+   - name: Create FW policy to allow HTTP access to Linux VM.
      fortios_firewall_policy:
        vdom:  "{{ vdom }}"
        state: "present"
        firewall_policy:
             policyid: 10
-            name: "app_server_http"
-            comments: "app-server-http-fw-policy - created with ANSIBLE"
+            name: "allow-http-to-rw-az201-linux"
+            comments: "allow-http-to-rw-az201-linux - created with ANSIBLE"
             srcintf:
               - name: "port1"
             dstintf:
@@ -26,7 +26,7 @@
             srcaddr:
               - name: "all"
             dstaddr:
-              - name: "app-server-http-vip"
+              - name: "rw-az201-linux-http-vip"
             schedule: "always"
             service:
               - name: "HTTP"
